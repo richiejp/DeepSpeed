@@ -170,10 +170,9 @@ class CUDA_Accelerator(DeepSpeedAccelerator):
 
     def available_memory(self, device_index=None):
         if pynvml:
-            if device_index is None:
-                device_index = self.current_device()
-            handle = pynvml.nvmlDeviceGetHandleByIndex(self._get_nvml_gpu_id(device_index))
-            info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+            uuid = os.environ['NVIDIA_VISIBLE_DEVICES']
+            mhandle = pynvml.nvmlDeviceGetHandleByUUID(uuid)
+            info = pynvml.nvmlDeviceGetMemoryInfo(mhandle)
             return info.free
         else:
             return self.total_memory(device_index) - self.memory_allocated(device_index)
